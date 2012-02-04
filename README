@@ -1,10 +1,6 @@
 		   README for libase library
 
-This is libase, simple template collection library. There is
-also collection of other binary tools, including static analyser (sea)
-each of which have their own sub-directory named after them. These tools
-make use of common libraries (scl) and a common set of header files
-(include).
+This is libase, simple template collection library.
 
 There are README and NEWS files in most of the program sub-directories
 which give more information about those specific programs.
