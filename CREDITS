@@ -1,0 +1,8 @@
+This project implementation either uses some parts or is partially inspired
+by the following projects.
+
+The Linux kernel released under the GNU General Public License (GPL)
+version 2.0.
+
+The glibc library released under the GNU Lesser General Public License (LGPL)
+version 2.0.
