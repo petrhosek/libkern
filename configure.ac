@@ -5,7 +5,7 @@ AC_INIT([libase], [0.1], [p.hosek@imperial.ac.uk])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([foreign -Wall -Werror])
+AM_INIT_AUTOMAKE([1.10 foreign subdir-objects -Wall -Werror])
 AM_MAINTAINER_MODE
 LT_INIT
 
