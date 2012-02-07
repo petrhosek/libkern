@@ -170,6 +170,15 @@ static inline bool list_is_last(const struct list_head *list, const struct list_
 }
 
 /**
+ * Tests whether a list is empty.
+ *
+ * @param head The list to test.
+ */
+static inline bool list_empty(struct list_head *head) {
+    return head->next == head;
+}
+
+/**
  * Tests whether a list is empty and not being modified.
  *
  * @param head the list to test
@@ -197,15 +206,6 @@ static inline void list_rotate_left(struct list_head *head) {
  */
 static inline bool list_is_singular(const struct list_head *head) {
     return !list_empty(head) && (head->next == head->prev);
-}
-
-/**
- * Tests whether a list is empty.
- *
- * @param head The list to test.
- */
-static inline bool list_empty(struct list_head *head) {
-    return head->next == head;
 }
 
 /**
