@@ -1,11 +1,12 @@
 #ifndef BITMAP_H_
 #define BITMAP_H_
 
-#include <bitops.h>
-#include <kernel.h>
+#include "bitops.h"
+#include "kernel.h"
 
 #include <ctype.h>
 #include <stdbool.h>
+#include <stddef.h>
 #include <string.h>
 
 /*

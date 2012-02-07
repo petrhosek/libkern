@@ -1,8 +1,8 @@
 #ifndef HASH_H_
 #define HASH_H_ 1
 
-#include <unistd.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #define __hash_mix(a, b, c) do { \
         a -= b; a -= c; a ^= ( c >> 13 ); \

@@ -1,14 +1,15 @@
 #ifndef KERNEL_H_
 #define KERNEL_H_ 1
 
-#include <bitops.h>
+#include "bitops.h"
+
 #include <assert.h>
 #include <limits.h>
 #include <stdarg.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <inttypes.h>
 
 #define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 

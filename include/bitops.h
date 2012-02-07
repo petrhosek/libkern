@@ -1,7 +1,7 @@
 #ifndef BITOPS_H_
 #define BITOPS_H_ 1
 
-#include <kernel.h>
+#include "kernel.h"
 
 #include <stdbool.h>
 #include <stdint.h>

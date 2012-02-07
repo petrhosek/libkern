@@ -1,9 +1,11 @@
 #ifndef HTABLE_H_
 #define HTABLE_H_ 1
 
-#include <hlist.h>
-#include <hash.h>
-#include <kernel.h>
+#include "hash.h"
+#include "hlist.h"
+#include "kernel.h"
+
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 

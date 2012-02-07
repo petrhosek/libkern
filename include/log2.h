@@ -1,8 +1,9 @@
 #ifndef LOG2_H_
 #define LOG2_H_ 1
 
+#include "bitops.h"
+
 #include <ctype.h>
-#include <bitops.h>
 #include <stdbool.h>
 
 /** Deal with unrepresentable constant logarithms */

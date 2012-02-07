@@ -1,17 +1,19 @@
 #ifndef HLIST_H_
 #define HLIST_H_ 1
 
+#include "kernel.h"
+
 #include <stddef.h>
 
 /** Double linked lists with a single pointer list head */
-typedef struct hlist_head {
+struct hlist_head {
     struct hlist_node *first;
-} hlist_head_t;
+};
 
 /** Linked list node */
-typedef struct hlist_node {
+struct hlist_node {
     struct hlist_node *next, **pprev;
-} hlist_node_t;
+};
 
 #define HLIST_HEAD_INIT { .first = NULL }
 #define HLIST_HEAD(name) \

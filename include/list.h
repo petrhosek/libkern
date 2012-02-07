@@ -1,13 +1,14 @@
 #ifndef LIST_H_
 #define LIST_H_ 1
 
+#include "kernel.h"
+
 #include <stddef.h>
-#include <kernel.h>
 
 /** Double linked list implementation */
-typedef struct list_head {
+struct list_head {
     struct list_head *next, *prev;
-} list_head_t;
+};
 
 #define LIST_HEAD_INIT(name) { &(name), &(name) }
 #define LIST_HEAD(name) \

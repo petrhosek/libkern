@@ -1,18 +1,22 @@
 #ifndef LHEAP_H_
 #define LHEAP_H_ 1
 
+#include "kernel.h"
+
+#include <stddef.h>
+
 /** Leftist heap tree node */
-typedef struct lh_node {
+struct lh_node {
     struct lh_node *parent;
     struct lh_node *left;
     struct lh_node *right;
     int npl;
-} lh_node_t;
+};
 
 /** Leftist heap */
-typedef struct lh_heap {
+struct lh_heap {
     struct lh_node *node;
-} lh_heap_t;
+};
 
 #define lh_heap(name) struct lh_node name = { NULL }
 #define lh_heap_init(root) do { \

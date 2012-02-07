@@ -1,11 +1,12 @@
 #ifndef RBTREE_H_
 #define RBTREE_H_ 1
 
+#include "kernel.h"
+
 #include <stddef.h>
-#include <kernel.h>
 
 /** Red Black tree node */
-typedef struct rb_node {
+struct rb_node {
     unsigned long par_color;
 #define RB_RED      0
 #define RB_BLACK    1
