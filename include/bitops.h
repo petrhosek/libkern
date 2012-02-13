@@ -51,6 +51,10 @@ static inline void set_bit(int nr, unsigned long *addr) {
     addr[nr / BITS_PER_LONG] |= 1UL << (nr % BITS_PER_LONG);
 }
 
+static inline void clear_bit(int nr, unsigned long *addr) {
+    addr[nr / BITS_PER_LONG] &= ~(1UL << (nr % BITS_PER_LONG));
+}
+
 static inline bool test_bit(unsigned int nr, const unsigned long *addr) {
     return ((1UL << (nr % BITS_PER_LONG)) &
         (((unsigned long *)addr)[nr / BITS_PER_LONG])) != 0;
