@@ -1,6 +1,6 @@
 		   README for libase library
 
-This is libase, simple template collection library.
+This is libase, simple generic collection library for C.
 
 There are README and NEWS files in most of the program sub-directories
 which give more information about those specific programs.
