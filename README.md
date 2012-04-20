@@ -1,7 +1,7 @@
 libkern library
 ===============
 
-liblern is a simple generic collection library for C99 largely based on
+libkern is a simple generic collection library for C99 largely based on
 Linux kernel sources, algoritms and data structures.
 
 For more information, please consider visiting [project
@@ -10,15 +10,15 @@ website](http://github.com/petrh/libkern).
 Features
 --------
 
-libibase provides the following data structures and algorithms:
+libkern provides the following data structures and algorithms:
 
 * single- and double-linked lists
 * red-black trees
 * leftist heaps
 * bitmaps
 
-Building libibase
------------------
+Building libkern
+----------------
 		   
 It is now possible to automatically configure and build a variety of
 tools with one command. To build all of the tools contained herein, run
@@ -71,19 +71,18 @@ Authors
 Credits
 -------
 
-This project implementation either uses some parts or is partially
-inspired by the following projects.
+libkern implementation either uses some parts or is partially inspired
+by the following projects:
 
-The Linux kernel released under the GNU General Public License (GPL)
+* The Linux kernel released under the GNU General Public License (GPL)
 version 2.0.
-
-The glibc library released under the GNU Lesser General Public License
+* The glibc library released under the GNU Lesser General Public License
 (LGPL) version 2.0.
 
 License
 -------
 
-libibase is licensed under the GNU General Public License (GPL) version
+libkern is licensed under the GNU General Public License (GPL) version
 2.0 with linking exemption. This means you can link to the library with
 any program, commercial, open source or other. However, you cannot
-modify libgit2 and distribute it without supplying the source.
+modify libkern and distribute it without supplying the source.
