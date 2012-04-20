@@ -7,30 +7,24 @@
 
 /** Red Black tree node */
 struct rb_node {
-    unsigned long par_color;
+    unsigned long rb_parent_color;
 #define RB_RED      0
 #define RB_BLACK    1
-    struct rb_node *right;
-    struct rb_node *left;
-};
+    struct rb_node *rb_right;
+    struct rb_node *rb_left;
+} __attribute__((aligned(sizeof(long))));
 
 /** Red Black tree root */
 struct rb_root {
-    struct rb_node *node;
+    struct rb_node *rb_node;
 };
 
-#define rb_parent(r) ((struct rb_node *)((r)->par_color & ~3))
-#define rb_color(r) ((r)->par_color & 1)
+#define rb_parent(r) ((struct rb_node *)((r)->rb_parent_color & ~3))
+#define rb_color(r) ((r)->rb_parent_color & 1)
 #define rb_is_red(r) (!rb_color(r))
 #define rb_is_black(r) rb_color(r)
-#define rb_set_red(r) do { (r)->par_color &= ~1; } while (0)
-#define rb_set_black(r) do { (r)->par_color |= 1; } while (0)
-
-#define RB_ROOT (struct rb_root) { NULL, }
-
-#define RB_EMPTY_ROOT(root) ((root)->rb_node == NULL)
-#define RB_EMPTY_NODE(node) (rb_parent(node) == node)
-#define RB_CLEAR_NODE(node) (rb_set_parent(node, node))
+#define rb_set_red(r) do { (r)->rb_parent_color &= ~1; } while (0)
+#define rb_set_black(r) do { (r)->rb_parent_color |= 1; } while (0)
 
 /**
  * Set node parent color in red black tree.
@@ -39,7 +33,7 @@ struct rb_root {
  * @param par parent node
  */
 static inline void rb_set_parent(struct rb_node *node, struct rb_node *par) {
-    node->par_color = (node->par_color & 3) | (unsigned long)par;
+    node->rb_parent_color = (node->rb_parent_color & 3) | (unsigned long)par;
 }
 
 /**
@@ -49,8 +43,43 @@ static inline void rb_set_parent(struct rb_node *node, struct rb_node *par) {
  * @param color color (red/black)
  */
 static inline void rb_set_color(struct rb_node *node, int color) {
-    node->par_color = (node->par_color & ~1) | color;
+    node->rb_parent_color = (node->rb_parent_color & ~1) | color;
 }
+
+#define RB_ROOT (struct rb_root) { NULL, }
+
+#define RB_EMPTY_ROOT(root) ((root)->rb_node == NULL)
+#define RB_EMPTY_NODE(node) (rb_parent(node) == node)
+#define RB_CLEAR_NODE(node) (rb_set_parent(node, node))
+
+/**
+ * Initialize the tree node structure.
+ *
+ * @param node given node
+ */
+static inline void rb_init_node(struct rb_node *rb) {
+    rb->rb_parent_color = 0;
+    rb->rb_right = NULL;
+    rb->rb_left = NULL;
+    RB_CLEAR_NODE(rb);
+}
+
+/* Externals are commented with implementation */
+extern void rb_insert_color(struct rb_node *node, struct rb_root *root);
+extern void rb_erase(struct rb_node *node, struct rb_root *root);
+
+typedef void (*rb_augment_f)(struct rb_node *node, void *data);
+
+extern void rb_augment_insert(struct rb_node *node, rb_augment_f func, void *data);
+extern struct rb_node *rb_augment_erase_begin(struct rb_node *node);
+extern void rb_augment_erase_end(struct rb_node *node, rb_augment_f func, void *data);
+
+extern struct rb_node *rb_next(struct rb_node *node);
+extern struct rb_node *rb_prev(struct rb_node *node);
+extern struct rb_node *rb_first(struct rb_root *root);
+extern struct rb_node *rb_last(struct rb_root *root);
+
+extern void rb_replace_node(struct rb_node *victim, struct rb_node *new,  struct rb_root *root);
 
 /**
  * Link node with given node in red black tree.
@@ -61,8 +90,8 @@ static inline void rb_set_color(struct rb_node *node, int color) {
  */
 static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
                 struct rb_node **rb_link) {
-    node->par_color = (unsigned long )parent;
-    node->left = node->right = NULL;
+    node->rb_parent_color = (unsigned long)parent;
+    node->rb_left = node->rb_right = NULL;
 
     *rb_link = node;
 }
@@ -90,13 +119,13 @@ static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
  */
 #define rb_find(root, type, member, key, value, cmp) ({ \
         bool found = false; \
-        struct rb_node *node = root->node; \
+        struct rb_node *node = root->rb_node; \
         while (node) { \
             int result = cmp(rb_entry(node, type, member)->key, value); \
             if (result < 0) { \
-                node = node->left; \
+                node = node->rb_left; \
             } else if (result > 0) { \
-                node = node->right; \
+                node = node->rb_right; \
             } else { \
                 found = true; \
                 break; \
@@ -117,15 +146,15 @@ static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
  */
 #define rb_insert(root, type, member, key, item, cmp) ({ \
         bool insert = true; \
-        struct rb_node **new = &(root->node), *parent = NULL; \
+        struct rb_node **new = &(root->rb_node), *parent = NULL; \
         while (*new) { \
             int result = cmp(rb_entry(*new, type, member)->key, \
                 rb_entry(item, type, member)->key); \
             parent = *new; \
             if (result < 0) { \
-                new = &((*new)->left); \
+                new = &((*new)->rb_left); \
             } else if (result > 0) { \
-                new = &((*new)->right); \
+                new = &((*new)->rb_right); \
             } else { \
                 insert = false; \
                 break; \
@@ -147,7 +176,7 @@ static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
  * @param value value to delete from tree
  * @param cmp comparison function
  */
-#define rb_del(root, type, member, key, value, cmp) ({ \
+#define rb_delete(root, type, member, key, value, cmp) ({ \
         struct rb_node *node = rb_find(root, type, member, key, value, cmp); \
         if (node) { \
             rb_erase(node, root); \
@@ -180,44 +209,34 @@ static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
  * @param root the root for your tree
  */
 #define rb_for_each_safe(pos, n, root) \
-    for (pos = rb_first(root), n = rb_next(pos); pos; \
-        pos = n, n = rb_next(pos))
+    for (pos = rb_first(root); pos && ({ n = rb_next(pos); 1; }); \
+         pos = n)
 
 /**
  * Iterate over red black tree of given type.
  *
- * @param pos struct tree node to use as a loop counter
+ * @param tpos type pointer to use as a loop cursor
+ * @param pos node pointer to use as a loop cursor
  * @param root root for your tree
  * @param member name of the tree structure within the struct
  */
-#define rb_for_each_entry(pos, root, member) \
-    for (pos = rb_entry(rb_first(root), typeof(*pos), member); \
-         pos; \
-         pos = rb_entry(rb_next(pos->member), typeof(*pos), member))
+#define rb_for_each_entry(tpos, pos, root, member) \
+    for (pos = rb_first(root); \
+         pos && ({ tpos = rb_entry(pos, typeof(*tpos), member); 1;}); \
+         pos = rb_next(pos))
 
 /**
  * Iterate over list of given type safe against removal of list entry.
  *
+ * @param tpos type pointer to use as a loop cursor
  * @param pos struct tree node to use as a loop counter
  * @param n another type pointer to use as temporary storage
  * @param root root for your tree
  * @param member name of the tree structure within the struct
  */
-#define rb_for_each_entry_safe(pos, n, root, member) \
-    for (pos = rb_entry(rb_first(root), typeof(*pos), member), \
-         n = rb_entry(rb_next(pos->member), typeof(*pos), member); \
-         pos; \
-         pos = n, n = rb_entry(rb_next(&n->member), typeof(*n), member))
-
-/* Externals are commented with implementation */
-extern void rb_insert_color(struct rb_node *node, struct rb_root *root);
-extern void rb_erase(struct rb_node *node, struct rb_root *root);
-
-extern struct rb_node *rb_next(struct rb_node *node);
-extern struct rb_node *rb_prev(struct rb_node *node);
-extern struct rb_node *rb_first(struct rb_root *root);
-extern struct rb_node *rb_last(struct rb_root *root);
-
-extern void rb_replace_node(struct rb_node *victim, struct rb_node *new,  struct rb_root *root);
+#define rb_for_each_entry_safe(tpos, pos, n, root, member) \
+    for (pos = rb_first(root); \
+         pos && ({ n = rb_next(pos); 1; }) && ({ tpos = rb_entry(pos, typeof(*tpos), member); 1;}); \
+         pos = n)
 
 #endif /* !RBTREE_H_ */

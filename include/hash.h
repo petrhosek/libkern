@@ -1,57 +1,8 @@
-#ifndef HASH_H_
-#define HASH_H_ 1
+#ifndef HASH_H
+#define HASH_H
 
 #include <stdint.h>
 #include <unistd.h>
-
-#define __hash_mix(a, b, c) do { \
-        a -= b; a -= c; a ^= ( c >> 13 ); \
-        b -= c; b -= a; b ^= ( a << 8 ); \
-        c -= a; c -= b; c ^= ( b >> 13 ); \
-        a -= b; a -= c; a ^= ( c >> 12 ); \
-        b -= c; b -= a; b ^= ( a << 16 ); \
-        c -= a; c -= b; c ^= ( b >> 5 ); \
-        a -= b; a -= c; a ^= ( c >> 3 ); \
-        b -= c; b -= a; b ^= ( a << 10 ); \
-        c -= a; c -= b; c ^= ( b >> 15 ); \
-    } while (0)
-
-#define __hash(key, length) ({ \
-    unsigned _i, _j, _k; \
-    char *_key = (char *)(key); \
-    unsigned _hash = 0xfeedbeef; \
-    _i = _j = 0x9e3779b9; \
-    _k = length; \
-    while (_k >= 12) { \
-        _i += (_key[0] + ((unsigned)_key[1] << 8) \
-            + ((unsigned)_key[2] << 16) \
-            + ((unsigned)_key[3] << 24)); \
-        _j += (_key[4] + ((unsigned)_key[5] << 8) \
-            + ((unsigned)_key[6] << 16) \
-            + ((unsigned)_key[7] << 24)); \
-        _hash += (_key[8] + ((unsigned)_key[9] << 8) \
-            + ((unsigned)_key[10] << 16) \
-            + ((unsigned)_key[11] << 24)); \
-        __hash_mix(_i, _j, _hash); \
-        _key += 12; \
-        _k -= 12; \
-    } \
-    _hash += length; \
-    switch (_k) { \
-        case 11: _hash += ((unsigned)_key[10] << 24); \
-        case 10: _hash += ((unsigned)_key[9] << 16); \
-        case 9:  _hash += ((unsigned)_key[8] << 8); \
-        case 8:  _j += ((unsigned)_key[7] << 24); \
-        case 7:  _j += ((unsigned)_key[6] << 16); \
-        case 6:  _j += ((unsigned)_key[5] << 8); \
-        case 5:  _j += _key[4]; \
-        case 4:  _i += ((unsigned)_key[3] << 24); \
-        case 3:  _i += ((unsigned)_key[2] << 16); \
-        case 2:  _i += ((unsigned)_key[1] << 8); \
-        case 1:  _i += _key[0]; \
-    } \
-    __hash_mix(_i, _j, _hash); \
-    _hash; })
 
 /*
  * Knuth recommends primes in approximately golden ratio to the maximum
@@ -71,42 +22,55 @@
 
 #if __WORDSIZE == 32
 #define GOLDEN_RATIO_PRIME GOLDEN_RATIO_PRIME_32
-#define _hash_long(val, bits) _hash_32(val, bits)
+#define hash_long(val, bits) hash_32(val, bits)
 #elif __WORDSIZE == 64
-#define _hash_long(val, bits) _hash_64(val, bits)
+#define hash_long(val, bits) hash_64(val, bits)
 #define GOLDEN_RATIO_PRIME GOLDEN_RATIO_PRIME_64
 #endif
 
-static inline uint64_t _hash_64(uint64_t val, unsigned int bits) {
-    uint64_t _hash = val;
+static inline uint64_t hash_64(uint64_t val, unsigned int bits) {
+  uint64_t hash = val;
 
-    uint64_t n = _hash;
-    n <<= 18;
-    _hash -= n;
-    n <<= 33;
-    _hash -= n;
-    n <<= 3;
-    _hash += n;
-    n <<= 3;
-    _hash -= n;
-    n <<= 4;
-    _hash += n;
-    n <<= 2;
-    _hash += n;
+  uint64_t n = hash;
+  n <<= 18;
+  hash -= n;
+  n <<= 33;
+  hash -= n;
+  n <<= 3;
+  hash += n;
+  n <<= 3;
+  hash -= n;
+  n <<= 4;
+  hash += n;
+  n <<= 2;
+  hash += n;
 
-    /* high bits are more random, so use them */
-    return _hash >> (64 - bits);
+  // High bits are more random, so use them
+  return hash >> (64 - bits);
 }
 
-static inline uint32_t _hash_32(uint32_t val, unsigned int bits) {
-    uint32_t _hash = val * GOLDEN_RATIO_PRIME_32;
+static inline uint32_t hash_32(uint32_t val, unsigned int bits) {
+  uint32_t hash = val * GOLDEN_RATIO_PRIME_32;
 
-    /* high bits are more random, so use them */
-    return _hash >> (32 - bits);
+  // High bits are more random, so use them
+  return hash >> (32 - bits);
 }
 
-static inline unsigned long _hash_ptr(const void *ptr, unsigned int bits) {
-    return _hash_long((unsigned long)ptr, bits);
+static inline unsigned long hash_ptr(const void *ptr, unsigned int bits) {
+  return hash_long((unsigned long)ptr, bits);
 }
 
-#endif /* !HASH_H_ */
+static inline unsigned long hash_internal(const void *data, unsigned int len) {
+  unsigned char *p = (unsigned char *)data;
+  unsigned char *e = *p + len;
+  uint32_t h = 0xfeedbeef;
+
+  while (p < e) {
+    h ^= (uint32_t)(*p++);
+    h *= 0x9e3779b9;
+  }
+
+  return h;
+}
+
+#endif // HASH_H

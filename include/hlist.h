@@ -150,6 +150,26 @@ static inline void hlist_move_list(struct hlist_head *old, struct hlist_head *ne
     container_of(ptr, type, member)
 
 /**
+ * Get the first element from a list.
+ *
+ * @param ptr list head to take the element from
+ * @param type type of the struct this is embedded in
+ * @param member name of the list struct within the struct
+ */
+#define hlist_first_entry(head, type, member) \
+    list_entry((ptr)->first, type, member)
+
+/**
+ * Get the first element from a list.
+ *
+ * @param ptr list head to take the element from
+ * @param type type of the struct this is embedded in
+ * @param member name of the list struct within the struct
+ */
+#define hlist_next_entry(node, type, member) \
+    list_entry((node)->member.next, type, member)
+
+/**
  * Iterate over a list.
  *
  * @param pos struct list head to use as a loop counter

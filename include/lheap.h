@@ -7,29 +7,29 @@
 
 /** Leftist heap tree node */
 struct lh_node {
-    struct lh_node *parent;
-    struct lh_node *left;
-    struct lh_node *right;
-    int npl;
+    struct lh_node *lh_parent;
+    struct lh_node *lh_left;
+    struct lh_node *lh_right;
+    int lh_npl;
 };
 
 /** Leftist heap */
 struct lh_heap {
-    struct lh_node *node;
+    struct lh_node *lh_node;
 };
 
 #define lh_heap(name) struct lh_node name = { NULL }
 #define lh_heap_init(root) do { \
-        (root)->node = NULL; \
+        (root)->lh_node = NULL; \
     } while (0)
 
-#define lh_heap_empty(root) ((root)->node == NULL)
+#define lh_heap_empty(root) ((root)->lh_node == NULL)
 
 #define lh_node_empty(node) (node) == NULL
 #define lh_node_init(node)  do { \
-        (node)->parent = NULL; \
-        (node)->left = (node)->right = NULL; \
-        (node)->npl = 0; \
+        (node)->lh_parent = NULL; \
+        (node)->lh_left = (node)->lh_right = NULL; \
+        (node)->lh_npl = 0; \
     } while (0)
 
 /**
@@ -63,24 +63,24 @@ struct lh_heap {
                 lh_swap(merged, mergee); \
             } \
             while (merged != NULL && mergee != NULL) { \
-                if ((merged->right == NULL) || \
-                    (cmp(lh_entry(merged->right, type, member)->key, \
+                if ((merged->lh_right == NULL) || \
+                    (cmp(lh_entry(merged->lh_right, type, member)->key, \
                         lh_entry(mergee, type, member)->key) < 0)) { \
-                    lh_swap(merged->right, mergee); \
-                    merged->right->parent = merged; \
+                    lh_swap(merged->lh_right, mergee); \
+                    merged->lh_right->lh_parent = merged; \
                     if (mergee == NULL) break; \
                 } \
-                merged = merged->right; \
+                merged = merged->lh_right; \
             } \
             while (merged != NULL) { \
-                if(merged->left == NULL || \
-                    (merged->right != NULL && \
-                        merged->left->npl < merged->right->npl)) { \
-                    lh_swap(merged->left, merged->right); \
+                if(merged->lh_left == NULL || \
+                    (merged->lh_right != NULL && \
+                        merged->lh_left->lh_npl < merged->lh_right->lh_npl)) { \
+                    lh_swap(merged->lh_left, merged->lh_right); \
                 } \
-                merged->npl = merged->right != NULL ? (merged->right->npl + 1) : 0; \
-                if (merged->parent == NULL) break; \
-                merged = merged->parent; \
+                merged->lh_npl = merged->lh_right != NULL ? (merged->lh_right->lh_npl + 1) : 0; \
+                if (merged->lh_parent == NULL) break; \
+                merged = merged->lh_parent; \
             } \
         } \
         merged; \
@@ -110,7 +110,7 @@ struct lh_heap {
  * @param cmp comparison function
  */
 #define lh_insert(heap, type, member, key, item, cmp) \
-    (heap)->node = lh_merge((heap->node), (item), type, member, key, cmp)
+    (heap)->lh_node = lh_merge((heap->lh_node), (item), type, member, key, cmp)
 
 /**
  * Delete node with minimal key value from heap.
@@ -123,7 +123,7 @@ struct lh_heap {
  * @param cmp comparison function
  */
 #define lh_del_min(heap, type, member, key, cmp) \
-    (heap)->node = lh_merge((heap->node)->left, (heap->node)->right, type, member, key, cmp)
+    (heap)->lh_node = lh_merge((heap->lh_node)->lh_left, (heap->lh_node)->lh_right, type, member, key, cmp)
 
 /**
  * Find node with minimal key in heap.
@@ -131,7 +131,7 @@ struct lh_heap {
  * @param heap heap
  * @return node with minimal key
  */
-#define lh_min(heap) (heap->node)
+#define lh_min(heap) (heap->lh_node)
 
 /**
  * Delete node from heap.
@@ -145,28 +145,28 @@ struct lh_heap {
  */
 #define lh_del(heap, type, member, key, item, cmp) ({ \
         struct lh_node *new, *parent; \
-        if ((item)->left != NULL) (item)->left->parent = NULL; \
-        if ((item)->right != NULL) (item)->right->parent = NULL; \
-        new = lh_merge((item)->left, (item)->right, type, member, key, cmp); \
-        (item)->left = (item)->right = NULL; \
-        parent = (item)->parent; \
-        (item)->parent = NULL; \
+        if ((item)->lh_left != NULL) (item)->lh_left->lh_parent = NULL; \
+        if ((item)->lh_right != NULL) (item)->lh_right->lh_parent = NULL; \
+        new = lh_merge((item)->lh_left, (item)->lh_right, type, member, key, cmp); \
+        (item)->lh_left = (item)->lh_right = NULL; \
+        parent = (item)->lh_parent; \
+        (item)->lh_parent = NULL; \
         if (parent != NULL) { \
-            parent->npl = 0; \
-            if (parent->right != (item)) { \
-                parent->left = parent->right; \
+            parent->lh_npl = 0; \
+            if (parent->lh_right != (item)) { \
+                parent->lh_left = parent->lh_right; \
             } \
-            parent->right = NULL; \
-            while (parent->parent != NULL) { \
-                parent = parent->parent; \
-                if (parent->right != NULL && parent->right->npl > parent->left->npl) { \
-                    lh_swap(parent->left, parent->right); \
+            parent->lh_right = NULL; \
+            while (parent->lh_parent != NULL) { \
+                parent = parent->lh_parent; \
+                if (parent->lh_right != NULL && parent->lh_right->lh_npl > parent->lh_left->lh_npl) { \
+                    lh_swap(parent->lh_left, parent->lh_right); \
                 } \
-                parent->npl = parent->right != NULL ? (parent->right->npl + 1) : 0; \
+                parent->lh_npl = parent->lh_right != NULL ? (parent->lh_right->lh_npl + 1) : 0; \
             } \
-            (heap)->node = lh_merge((heap)->node, new, type, member, key, cmp); \
+            (heap)->lh_node = lh_merge((heap)->lh_node, new, type, member, key, cmp); \
         } else { \
-            (heap)->node = new; \
+            (heap)->lh_node = new; \
         } \
     })
 

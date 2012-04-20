@@ -12,7 +12,7 @@ struct list_head {
 
 #define LIST_HEAD_INIT(name) { &(name), &(name) }
 #define LIST_HEAD(name) \
-        struct list_head name = LIST_HEAD_INIT(name)
+  struct list_head name = LIST_HEAD_INIT(name)
 
 /**
  * Initialize new linked list entry.
@@ -322,7 +322,7 @@ static inline void list_splice_tail_init(struct list_head *list, struct list_hea
  * @param member name of the list struct within the struct
  */
 #define list_next_entry(ptr, type, member) \
-    list_entry((ptr)->member.next, typeof(*ptr), member)
+    list_entry((ptr)->member.next, type, member)
 
 /**
  * Iterate over a list.

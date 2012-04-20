@@ -4,10 +4,13 @@
 #include "hash.h"
 #include "hlist.h"
 #include "kernel.h"
+#include "log2.h"
 
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <sys/mman.h>
 
 #define BLOOM_BIT_LENGTH 8
 
@@ -127,7 +130,7 @@ static inline int htable_init_n(struct htable *table, size_t n) {
  *
  * @param table hash table
  */
-static inline void htable_finit(struct htable *table) {
+static inline void htable_destroy(struct htable *table) {
     if (table && table->bucks)
         free(table->bucks);
 
@@ -146,7 +149,7 @@ static inline void htable_add(struct htable *table, struct htable_entry *entry,
         void *key, size_t len) {
     INIT_HTABLE_ENTRY(entry, key, len);
 
-    unsigned hash = __hash(key, len);
+    unsigned hash = jhash(key, len, 0);
     unsigned buck = htable_which_bucket(table, hash);
     hlist_add_head(&entry->node, &table->bucks[buck]);
 
@@ -172,7 +175,7 @@ static inline struct htable_entry *htable_find(const struct htable *h,
     struct htable_entry *e;
     struct hlist_node *n;
 
-    unsigned hash = __hash(key, len);
+    unsigned hash = jhash(key, len, 0);
     unsigned buck = htable_which_bucket(h, hash);
 
     if (bloom_test(h->bitvect, hash))
