@@ -1,7 +1,7 @@
-#ifndef HTABLE_H_
-#define HTABLE_H_ 1
+#ifndef HTABLE_H
+#define HTABLE_H
 
-#include "hash.h"
+#include "jhash.h"
 #include "hlist.h"
 #include "kernel.h"
 #include "log2.h"
@@ -21,14 +21,14 @@
 #define bloom_finit(bitvect) free((bitvect))
 
 #define bloom_set_bit(bits, idx) \
-    (bits[(idx) / BITS_PER_BYTE] |= (1U << ((idx) % BITS_PER_BYTE)))
+  (bits[(idx) / BITS_PER_BYTE] |= (1U << ((idx) % BITS_PER_BYTE)))
 #define bloom_test_bit(bits, idx) \
-    (bits[(idx) / BITS_PER_BYTE] & (1U << ((idx) % BITS_PER_BYTE)))
+  (bits[(idx) / BITS_PER_BYTE] & (1U << ((idx) % BITS_PER_BYTE)))
 
 #define bloom_set(bitvect, hash) \
-    bloom_set_bit((bitvect), (hash & (uint32_t)((1ULL << BLOOM_BIT_LENGTH) - 1)))
+  bloom_set_bit((bitvect), (hash & (uint32_t)((1ULL << BLOOM_BIT_LENGTH) - 1)))
 #define bloom_test(bitvect, hash) \
-    bloom_test_bit((bitvect), (hash & (uint32_t)((1ULL << BLOOM_BIT_LENGTH) - 1)))
+  bloom_test_bit((bitvect), (hash & (uint32_t)((1ULL << BLOOM_BIT_LENGTH) - 1)))
 
 /** Default number of buckets */
 #define HASH_NUM_BUCKETS 16
@@ -37,36 +37,36 @@
 
 /** Hash table entry identified by key */
 struct htable_entry {
-    /** Linked list node */
-    struct hlist_node node;
-    /** Pointer to enclosing struct's key */
-    void *key;
-    /** Enclosing struct's key length */
-    size_t len;
-    /** Result of hash function applied to key */
-    unsigned hash;
+  /** Linked list node */
+  struct hlist_node node;
+  /** Pointer to enclosing struct's key */
+  void *key;
+  /** Enclosing struct's key length */
+  size_t len;
+  /** Result of hash function applied to key */
+  unsigned hash;
 };
 
 /** Hash table bucket */
 struct htable_bucket {
-    /** Head of list of entries in the bucket */
-    struct hlist_head head;
-    /** Number of entries in the bucket */
-    size_t count;
-    /** Expansion multiplier, postpones multiplication */
-    unsigned expand_mult;
+  /** Head of list of entries in the bucket */
+  struct hlist_head head;
+  /** Number of entries in the bucket */
+  size_t count;
+  /** Expansion multiplier, postpones multiplication */
+  unsigned expand_mult;
 };
 
 /** Hash table containing buckets full of entries */
 struct htable {
-    /** Buckets containing table elements */
-    struct hlist_head *bucks;
-    /** Number of allocated buckets */
-    size_t size;
-    /** Number of entries in the table */
-    size_t count;
-    /** Bloom filter bit vector */
-    uint8_t *bitvect;
+  /** Buckets containing table elements */
+  struct hlist_head *bucks;
+  /** Number of allocated buckets */
+  size_t size;
+  /** Number of entries in the table */
+  size_t count;
+  /** Bloom filter bit vector */
+  uint8_t *bitvect;
 };
 
 #define htable_which_bucket(table, hash) ((hash) & ((table)->size - 1))
@@ -75,9 +75,9 @@ struct htable {
  * Initialize new hash table entry.
  */
 static inline void INIT_HTABLE_ENTRY(struct htable_entry *entry, void *key, size_t len) {
-    INIT_HLIST_NODE(&entry->node);
-    entry->key = key;
-    entry->len = len;
+  INIT_HLIST_NODE(&entry->node);
+  entry->key = key;
+  entry->len = len;
 }
 
 /**
@@ -86,20 +86,22 @@ static inline void INIT_HTABLE_ENTRY(struct htable_entry *entry, void *key, size
  * @param table hash table
  */
 static inline int htable_init(struct htable *table) {
-    if (!table)
-        return -1;
+  if (!table) {
+    return -1;
+  }
 
-    table->size = HASH_NUM_BUCKETS;
-    table->bucks = (struct hlist_head *)malloc(sizeof(struct hlist_head) * table->size);
-    assert(table->bucks);
+  table->size = HASH_NUM_BUCKETS;
+  table->bucks = (struct hlist_head *)malloc(sizeof(struct hlist_head) * table->size);
+  assert(table->bucks);
 
-    for (int i = 0; i < table->size; ++i)
-        INIT_HLIST_HEAD(&table->bucks[i]);
+  for (int i = 0; i < table->size; ++i) {
+    INIT_HLIST_HEAD(&table->bucks[i]);
+  }
 
-    table->count = 0;
-    bloom_init(table->bitvect);
+  table->count = 0;
+  bloom_init(table->bitvect);
 
-    return 0;
+  return 0;
 }
 
 /**
@@ -109,20 +111,21 @@ static inline int htable_init(struct htable *table) {
  * @param n aproximate size
  */
 static inline int htable_init_n(struct htable *table, size_t n) {
-    if (!table)
-        return -1;
+  if (!table) {
+    return -1;
+  }
 
-    table->size = n > 0 ? n : HASH_BUCKET_THRESH;
-    table->bucks = (struct hlist_head *)malloc(sizeof(struct hlist_head) * table->size);
-    assert(table->bucks);
+  table->size = n > 0 ? n : HASH_BUCKET_THRESH;
+  table->bucks = (struct hlist_head *)malloc(sizeof(struct hlist_head) * table->size);
+  assert(table->bucks);
 
-    for (int i = 0; i < table->size; ++i)
-        INIT_HLIST_HEAD(&table->bucks[i]);
+  for (int i = 0; i < table->size; ++i) {
+    INIT_HLIST_HEAD(&table->bucks[i]);
+  }
+  table->count = 0;
+  bloom_init(table->bitvect);
 
-    table->count = 0;
-    bloom_init(table->bitvect);
-
-    return 0;
+  return 0;
 }
 
 /**
@@ -131,10 +134,10 @@ static inline int htable_init_n(struct htable *table, size_t n) {
  * @param table hash table
  */
 static inline void htable_destroy(struct htable *table) {
-    if (table && table->bucks)
-        free(table->bucks);
-
-    bloom_finit(table->bitvect);
+  if (table && table->bucks) {
+    free(table->bucks);
+  }
+  bloom_finit(table->bitvect);
 }
 
 /**
@@ -145,21 +148,20 @@ static inline void htable_destroy(struct htable *table) {
  * @param key the pointer to entry key
  * @param len the key length
  */
-static inline void htable_add(struct htable *table, struct htable_entry *entry,
-        void *key, size_t len) {
-    INIT_HTABLE_ENTRY(entry, key, len);
+static inline void htable_add(struct htable *table, struct htable_entry *entry, void *key, size_t len) {
+  INIT_HTABLE_ENTRY(entry, key, len);
 
-    unsigned hash = jhash(key, len, 0);
-    unsigned buck = htable_which_bucket(table, hash);
-    hlist_add_head(&entry->node, &table->bucks[buck]);
+  unsigned hash = jhash(key, len, 0);
+  unsigned buck = htable_which_bucket(table, hash);
+  hlist_add_head(&entry->node, &table->bucks[buck]);
 
-//  struct htable_bucket *bucket = &table->buckets[bucket];
-//  if (bucket->count > (bucket->expand_mult + 1) * HASH_BUCKET_THRESH && !table->noexpand)
-//      htable_expand_buckets(table);
+  //  struct htable_bucket *bucket = &table->buckets[bucket];
+  //  if (bucket->count > (bucket->expand_mult + 1) * HASH_BUCKET_THRESH && !table->noexpand)
+  //      htable_expand_buckets(table);
 
-    bloom_set(table->bitvect, hash);
+  bloom_set(table->bitvect, hash);
 
-    table->count++;
+  table->count++;
 }
 
 /**
@@ -170,41 +172,39 @@ static inline void htable_add(struct htable *table, struct htable_entry *entry,
  * @param len yhe length of the key
  * @return a pointer to the entry that matches the key, NULL otherwise
  */
-static inline struct htable_entry *htable_find(const struct htable *h,
-        const void *key, size_t len) {
-    struct htable_entry *e;
-    struct hlist_node *n;
+static inline struct htable_entry *htable_find(const struct htable *h, const void *key, size_t len) {
+  struct htable_entry *e;
+  struct hlist_node *n;
 
-    unsigned hash = jhash(key, len, 0);
-    unsigned buck = htable_which_bucket(h, hash);
+  unsigned hash = jhash(key, len, 0);
+  unsigned buck = htable_which_bucket(h, hash);
 
-    if (bloom_test(h->bitvect, hash))
-        if (!hlist_empty(&h->bucks[buck])) {
-            hlist_for_each_entry(e, n, &h->bucks[buck], node) {
-                if (e->len == len && memcmp(e->key, key, len) == 0)
-                    return e;
-
-            }
+  if (bloom_test(h->bitvect, hash)) {
+    if (!hlist_empty(&h->bucks[buck])) {
+      hlist_for_each_entry(e, n, &h->bucks[buck], node) {
+        if (e->len == len && memcmp(e->key, key, len) == 0) {
+          return e;
         }
-    return NULL;
-}
-
-static inline struct htable_entry *htable_del_key(struct htable *table,
-        const void *key, size_t len) {
-    struct htable_entry *entry;
-
-    if ((entry = htable_find(table, key, len))) {
-        hlist_del_init(&entry->node);
-        table->count--;
-
-        return entry;
+      }
     }
-    return NULL;
+  }
+  return NULL;
 }
 
-static inline struct htable_entry *htable_del_entry(struct htable *table,
-        struct htable_entry *entry) {
-    return htable_del_key(table, entry->key, entry->len);
+static inline struct htable_entry *htable_del_key(struct htable *table, const void *key, size_t len) {
+  struct htable_entry *entry;
+
+  if ((entry = htable_find(table, key, len))) {
+    hlist_del_init(&entry->node);
+    table->count--;
+
+    return entry;
+  }
+  return NULL;
+}
+
+static inline struct htable_entry *htable_del_entry(struct htable *table, struct htable_entry *entry) {
+  return htable_del_key(table, entry->key, entry->len);
 }
 
 /**
@@ -215,7 +215,7 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param member the name of the entry within the struct
  */
 #define hash_entry(ptr, type, member) \
-    container_of(ptr, type, member)
+  container_of(ptr, type, member)
 
 /**
  * Looks up the hash table for the presence of key.
@@ -223,8 +223,8 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param member the name of the entry within the struct
  */
 #define hash_find_entry(table, key, len, type, member) ({ \
-        struct htable_entry *e = htable_find((table), (key), (len)); \
-        (type *)(e ? hash_entry(e, type, member) : NULL); })
+    struct htable_entry *e = htable_find((table), (key), (len)); \
+    (type *)(e ? hash_entry(e, type, member) : NULL); })
 
 /**
  * Iterate over hash table elements.
@@ -233,9 +233,9 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param table your table
  */
 #define htable_for_each(pos, table) \
-    for (int i = 0; i < (table)->size; ++i) \
-        for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
-             pos; pos = hlist_entry(pos->node.next, typeof(*pos), node))
+  for (int i = 0; i < (table)->size; ++i) \
+    for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
+         pos; pos = hlist_entry(pos->node.next, typeof(*pos), node))
 
 /**
  * Iterate over hash table elements safe against removal of table entry.
@@ -245,10 +245,10 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param table your table
  */
 #define htable_for_each_safe(pos, n, table) \
-    for (int i = 0; i < (table)->size; ++i) \
-        for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
-             pos && ({ n = hlist_entry(pos->node.next, typeof(*pos), node); 1; }); \
-             pos = n)
+  for (int i = 0; i < (table)->size; ++i) \
+    for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
+         pos && ({ n = hlist_entry(pos->node.next, typeof(*pos), node); 1; }); \
+         pos = n)
 
 /**
  * Iterate over hash table elements of given type.
@@ -259,10 +259,10 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param member the name of the enry within the struct
  */
 #define htable_for_each_entry(tpos, pos, table, member) \
-    for (int i = 0; i < (table)->size; ++i) \
-        for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
-             pos && ({ tpos = hash_entry(pos, typeof(*tpos), member); 1;}); \
-             pos = hlist_entry(pos->node.next, typeof(*pos), node))
+  for (int i = 0; i < (table)->size; ++i) \
+    for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
+         pos && ({ tpos = hash_entry(pos, typeof(*tpos), member); 1;}); \
+         pos = hlist_entry(pos->node.next, typeof(*pos), node))
 
 /**
  * Iterate over hash table elements of given type safe against removal of table entry.
@@ -273,9 +273,9 @@ static inline struct htable_entry *htable_del_entry(struct htable *table,
  * @param member the name of the enry within the struct
  */
 #define htable_for_each_entry_safe(tpos, pos, n, table, member) \
-    for (int i = 0; i < (table)->size; ++i) \
-        for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
-             pos && ({ n = hlist_entry(pos->node.next, typeof(*pos), node); 1; }) && ({ tpos = hash_entry(pos, typeof(*tpos), member); 1;}); \
-             pos = n)
+  for (int i = 0; i < (table)->size; ++i) \
+    for (pos = hlist_entry((table)->bucks[i].first, typeof(*pos), node); \
+         pos && ({ n = hlist_entry(pos->node.next, typeof(*pos), node); 1; }) && ({ tpos = hash_entry(pos, typeof(*tpos), member); 1;}); \
+         pos = n)
 
-#endif /* !HTABLE_H_ */
+#endif // HTABLE_H
