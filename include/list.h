@@ -315,7 +315,7 @@ static inline void list_splice_tail_init(struct list_head *list, struct list_hea
     list_entry((ptr)->next, type, member)
 
 /**
- * Get the first element from a list.
+ * Get the next element from a list.
  *
  * @param ptr list head to take the element from
  * @param type type of the struct this is embedded in
