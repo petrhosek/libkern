@@ -7,14 +7,17 @@ MAINTAINERCLEANFILES = \
 
 lib_LTLIBRARIES = libkern.la
 libkern_la_SOURCES = \
+	lib/atomic.c \
 	lib/bitmap.c \
 	lib/bitops.c \
 	lib/rbtree.c
 libkern_la_LDFLAGS = -version-info 0:0:0
 pkginclude_HEADERS = \
+	include/atomic.h \
 	include/bitmap.h \
 	include/bitops.h \
 	include/common.h \
+	include/compiler.h \
 	include/hash.h \
 	include/hlist.h \
 	include/htable.h \
