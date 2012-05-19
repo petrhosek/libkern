@@ -7,7 +7,6 @@ MAINTAINERCLEANFILES = \
 
 lib_LTLIBRARIES = libkern.la
 libkern_la_SOURCES = \
-	lib/atomic.c \
 	lib/bitmap.c \
 	lib/bitops.c \
 	lib/rbtree.c
