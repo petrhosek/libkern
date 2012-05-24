@@ -169,7 +169,7 @@ static inline void htable_add(struct htable *table, struct htable_entry *entry, 
  *
  * @param h the hash table to look into
  * @param key the key to look for
- * @param len yhe length of the key
+ * @param len the length of the key
  * @return a pointer to the entry that matches the key, NULL otherwise
  */
 static inline struct htable_entry *htable_find(const struct htable *h, const void *key, size_t len) {
