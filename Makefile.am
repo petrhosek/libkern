@@ -25,7 +25,8 @@ pkginclude_HEADERS = \
 	include/lheap.h \
 	include/list.h \
 	include/log2.h \
-	include/rbtree.h
+	include/rbtree.h \
+	include/vec.h
 pkgconfig_DATA = libkern.pc
 pkgconfigdir = $(libdir)/pkgconfig
 
