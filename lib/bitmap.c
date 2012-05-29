@@ -357,7 +357,6 @@ int bitmap_snprintf(char *buf, unsigned int buflen, const unsigned long *maskp, 
 int __bitmap_parse(const char *buf, unsigned int buflen, unsigned long *maskp, int nmaskbits) {
     int c, old_c, totaldigits, ndigits, nchunks, nbits;
     uint32_t chunk;
-    const char *ubuf = buf;
 
     bitmap_zero(maskp, nmaskbits);
 
