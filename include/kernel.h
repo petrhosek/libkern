@@ -37,12 +37,18 @@
 # define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
 #endif
 
+#ifndef roundup
 #define roundup(x, y) ({ \
     const typeof(y) __y = y; \
     (((x) + (__y - 1)) / __y) * __y; })
+#endif
+
+#ifndef rounddown
 #define rounddown(x, y) ({ \
     typeof(x) __x = (x); \
     __x - (__x % (y)); })
+#endif
+
 #define DIV_ROUND_CLOSEST(x, divisor) ({\
     typeof(divisor) __divisor = divisor; \
     (((x) + ((__divisor) / 2)) / (__divisor)); })
