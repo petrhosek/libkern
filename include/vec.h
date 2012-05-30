@@ -1,7 +1,8 @@
 #ifndef VEC_H
 #define VEC_H
 
-#define vec_free(a) ((a) ? free(__vec_raw(a)), 0 : 0)
+#define vec_init(a, n) ((a) = NULL, __vec_grow(a, n))
+#define vec_destroy(a) ((a) ? free(__vec_raw(a)), 0 : 0)
 #define vec_size(a) ((a) ? __vec_n(a) : 0)
 
 #define vec_push(a, v) (__vec_maybegrow(a, 1), (a)[__vec_n(a)++] = (v))
