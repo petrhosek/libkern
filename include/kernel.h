@@ -1,5 +1,22 @@
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef KERNEL_H_
-#define KERNEL_H_ 1
+#define KERNEL_H_
 
 #include "bitops.h"
 
@@ -10,8 +27,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 
 #define __ALIGN_MASK(x, mask) (((x) + (mask))&~(mask))
 #define ALIGN(x, a) __ALIGN_MASK(x, (typeof(x))(a) - 1)
@@ -27,7 +42,7 @@
 #define round_down(x, y) ((x) & ~__round_mask(x, y))
 
 #define FIELD_SIZEOF(t, f) (sizeof(((t*)0)->f))
-#define DIV_ROUND_UP(n,d) (((n) + (d) - 1) / (d))
+#define DIV_ROUND_UP(n, d) (((n) + (d) - 1) / (d))
 #define DIV_ROUND_UP_ULL(ll,d) \
     ({ unsigned long long _tmp = (ll)+(d)-1; do_div(_tmp, d); _tmp; })
 
@@ -188,4 +203,4 @@
     (type *)((char *)__mptr - offsetof(type, member)); })
 #endif
 
-#endif /* !KERNEL_H_ */
+#endif // KERNEL_H_

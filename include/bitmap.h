@@ -1,3 +1,20 @@
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef BITMAP_H_
 #define BITMAP_H_
 
@@ -222,4 +239,4 @@ static inline int bitmap_parse(const char *buf, unsigned int buflen, unsigned lo
     return __bitmap_parse(buf, buflen, maskp, nmaskbits);
 }
 
-#endif /* !BITMAP_H_ */
+#endif // BITMAP_H_

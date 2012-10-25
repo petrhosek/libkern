@@ -1,5 +1,22 @@
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifndef BITOPS_H_
-#define BITOPS_H_ 1
+#define BITOPS_H_
 
 #include "kernel.h"
 
@@ -261,4 +278,4 @@ extern unsigned long find_last_bit(const unsigned long *addr, unsigned long size
 extern unsigned long find_next_bit(const unsigned long *addr, unsigned long size, unsigned long offset);
 extern unsigned long find_next_zero_bit(const unsigned long *addr, unsigned long size, unsigned long offset);
 
-#endif /* !BITOPS_H_ */
+#endif // BITOPS_H_

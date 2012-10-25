@@ -1,5 +1,22 @@
-#ifndef JHASH_H
-#define JHASH_H
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef JHASH_H_
+#define JHASH_H_
 
 #include <stdint.h>
 #include <unistd.h>
@@ -145,4 +162,4 @@ static inline uint32_t jhash_1word(uint32_t a, uint32_t initval) {
   return jhash_3words(a, 0, 0, initval);
 }
 
-#endif // JHASH_H
+#endif // JHASH_H_

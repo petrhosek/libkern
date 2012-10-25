@@ -1,5 +1,22 @@
-#ifndef VEC_H
-#define VEC_H
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef VEC_H_
+#define VEC_H_
 
 #define vec_init(a, n) ((a) = NULL, __vec_grow(a, n))
 #define vec_destroy(a) ((a) ? free(__vec_raw(a)), 0 : 0)
@@ -43,4 +60,4 @@ static inline void __vec_growf(void **arr, int incr, int size) {
    }
 }
 
-#endif // VEC_H
+#endif // VEC_H_

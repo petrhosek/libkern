@@ -1,5 +1,22 @@
-#ifndef HTABLE_H
-#define HTABLE_H
+/*
+ * This file is part of libkern.
+ *
+ * libkern is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * libkern is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with libkern.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef HTABLE_H_
+#define HTABLE_H_
 
 #include "jhash.h"
 #include "hlist.h"
@@ -278,4 +295,4 @@ static inline struct htable_entry *htable_del_entry(struct htable *table, struct
          pos && ({ n = hlist_entry(pos->node.next, typeof(*pos), node); 1; }) && ({ tpos = hash_entry(pos, typeof(*tpos), member); 1;}); \
          pos = n)
 
-#endif // HTABLE_H
+#endif // HTABLE_H_
